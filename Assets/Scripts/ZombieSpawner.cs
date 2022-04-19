@@ -1,33 +1,35 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ZombieSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject[] objectPrefabs;
-    [SerializeField] private Transform randomSpawnParent;
-
-    private float currentTime;
-    private int counter = 0;
+    [SerializeField] private GameObject _objectPrefabs;
+    [SerializeField] private List<Transform> randomSpawnParent;
+    [SerializeField] private int _spawnAmount;
 
 
-    private void Update()
+    private void Start()
     {
-        currentTime += Time.deltaTime;
-        RandomSpawn(counter++);
+        RandomSpawn();
     }
 
-
-    void RandomSpawn(int counter)
+    void RandomSpawn()
     {
-        if (counter >= 10) return;
+        int randomIndex = Random.Range(0, randomSpawnParent.Count);
 
-        float randomX = Random.Range(-14, 14);
-        float randomZ = Random.Range(-14, 14);
-
-        for (int i = 0; i < 1; i++)
+        if (_spawnAmount > randomSpawnParent.Count)
         {
-            Instantiate(objectPrefabs[0], new Vector3(randomX, 1, randomZ), Quaternion.identity, randomSpawnParent);
-            objectPrefabs[0].GetComponent<Rigidbody>().velocity = Vector3.up;
+            _spawnAmount = randomSpawnParent.Count;
         }
-        
+        for (int i = 0; i < _spawnAmount ; i++)
+        {
+               Instantiate(_objectPrefabs, randomSpawnParent[randomIndex].position, Quaternion.identity, this.transform);
+               var kullanilmisSpawnPoint = randomSpawnParent[randomIndex];
+               
+                randomSpawnParent.Remove(kullanilmisSpawnPoint);
+                Debug.Log(randomSpawnParent.Count);
+        }
     }
 }
